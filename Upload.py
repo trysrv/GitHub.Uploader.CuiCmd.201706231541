@@ -63,7 +63,7 @@ class Main:
         auth_creator = web.service.github.api.v3.AuthenticationsCreator.AuthenticationsCreator(self.__db, self.__args.username)
         authentications = auth_creator.Create()
         client = web.service.github.api.v3.Client.Client(self.__db, authentications, self.__args)
-        if None is not self.__args.issues and self.__is_close:
+        if None is not self.__args.issues and self.__args.is_close:
             issue = self.__create_issue()
             self.__args.messages[0] = "fix #{0} ".format(issue['number']) + self.__args.messages[0]
         commiter = cui.uploader.command.repository.Commiter.Commiter(self.__db, client, self.__args)
