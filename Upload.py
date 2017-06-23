@@ -63,6 +63,8 @@ class Main:
         auth_creator = web.service.github.api.v3.AuthenticationsCreator.AuthenticationsCreator(self.__db, self.__args.username)
         authentications = auth_creator.Create()
         client = web.service.github.api.v3.Client.Client(self.__db, authentications, self.__args)
+        print('self.__args.is_close:', self.__args.is_close)
+        print(None is not self.__args.issues)
         if None is not self.__args.issues and self.__args.is_close:
             issue = self.__create_issue()
             self.__args.messages[0] = "fix #{0} ".format(issue['number']) + self.__args.messages[0]
