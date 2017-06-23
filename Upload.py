@@ -50,8 +50,11 @@ class Main:
         parser.add_argument('-m', '--messages', required=True, action='append')
         parser.add_argument('-i', '--issues', action='append')
         parser.add_argument('-l', '--labels', action='append')
-        parser.add_argument('-c', '--is-close', action='store_false') # is_close
+        parser.add_argument('-c', '--is-close', const=True, nargs="?") # is_close
+#        parser.add_argument('-c', '--is-close', action='store_false') # is_close
+        
         self.__args = parser.parse_args()
+        print(self.__args)
 
     def __log(self):
         web.log.Log.Log().Logger.info('リポジトリ名： {0}/{1}'.format(self.__account['Username'], self.__repos['Name']))
@@ -62,13 +65,13 @@ class Main:
     def __commit(self):
         auth_creator = web.service.github.api.v3.AuthenticationsCreator.AuthenticationsCreator(self.__db, self.__args.username)
         authentications = auth_creator.Create()
-        client = web.service.github.api.v3.Client.Client(self.__db, authentications, self.__args)
+        self.__client = web.service.github.api.v3.Client.Client(self.__db, authentications, self.__args)
         print('self.__args.is_close:', self.__args.is_close)
         print(None is not self.__args.issues)
-        if None is not self.__args.issues and self.__args.is_close:
+        if None is not self.__args.issues and None is not self.__args.is_close:
             issue = self.__create_issue()
             self.__args.messages[0] = "fix #{0} ".format(issue['number']) + self.__args.messages[0]
-        commiter = cui.uploader.command.repository.Commiter.Commiter(self.__db, client, self.__args)
+        commiter = cui.uploader.command.repository.Commiter.Commiter(self.__db, self.__client, self.__args)
         self.__create_message_command()
         commiter.ShowCommitFiles()
         commiter.AddCommitPush(self.__args.messages)
